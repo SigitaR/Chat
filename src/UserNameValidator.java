@@ -1,22 +1,18 @@
-import java.util.Vector;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by Sigute on 10/4/2017.
+ * Created by Sigute on 12/6/2017.
  */
-
-//taken from https://www.mkyong.com/regular-expressions/how-to-validate-username-with-regular-expression/
-
 public class UserNameValidator {
-    public static Pattern pattern;
+
+    private Pattern pattern;
     private Matcher matcher;
-    private Vector usernames = new Vector();
 
     private static final String USERNAME_PATTERN = "^[A-Za-z0-9_-]{1,12}$";
 
     public UserNameValidator(){
-
         pattern = Pattern.compile(USERNAME_PATTERN);
     }
 
@@ -27,30 +23,18 @@ public class UserNameValidator {
 
     }
 
-    //This one does not work :)
-
-    public boolean checkDuplicates(final String username) {
-
-        Server s = new Server();
-        usernames = s.getUsernames();
-        usernames.add(username);
-
-        if (validate(username)) {
-            for (int i = 0; i < usernames.size() - 1; i++) {
-                for (int j = (i + 1); j < usernames.size(); j++) {
-                    if (usernames.elementAt(i).toString().equalsIgnoreCase(
-                            usernames.elementAt(j).toString())) {
-                        System.out.println("User name exists.");
-                        usernames.remove(username);
-                        break;
-                    }
-
-                }
-
+    public boolean unique(final String username) {
+        Set<Server.ServerThread> threadList = Server.getThreadList();
+        boolean result = false;
+        for (Server.ServerThread t : threadList) {
+            String name = t.toString();
+            if (name.equals(username)) {
+                result = false;
+            } else {
+                result = true;
             }
-            return false;
-        } else {
-            return true;
         }
+        return result;
     }
-    }
+
+}
